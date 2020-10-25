@@ -1,29 +1,73 @@
 import colors from "./data/colors.js";
 
-// Напиши скрипт, который после нажатия кнопки Start, раз в секунду меняет цвет фона body на случайное значение из массива
-// используя инлайн-стиль. При нажатии на кнопку Stop, изменение цвета фона должно останавливаться.
+const randomIntegerFromInterval = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
 
-// ⚠️ Учти, на кнопку Start можно нажать бесконечное количество раз. Сделай так, чтобы пока изменение темы запушено, кнопка
-// Start была не активна.
+const COLOR_SWITCH_INTERVAL = 1000;
+let timerId;
 
-// Для генерации случайного числа (индекс элемента массива цветов), используй функцию randomIntegerFromInterval.
+const refs = {
+    buttonStart: document.querySelector('[data-action="start"]'),
+    buttonStop: document.querySelector('[data-action="stop"]'),
+}
 
-// const randomIntegerFromInterval = (min, max) => {
-// return Math.floor(Math.random() * (max - min + 1) + min);
-// };
+let currentColor = getRandomColor();
 
-// ссылки на
-//     <body>
-//     data - action="start"
-//      data-action="stop"
+setBodyColor(currentColor);
 
- // - делает кнопку СТОП НЕ активной
+refs.buttonStop.disabled = true;
+   
+refs.buttonStart.addEventListener('click', onClickButtonStart, {once: true});
 
-// слушаем Старт и при клике 
-    // - получает случайній цвет из масива
-    // - меняем цвет фона <body> на случайный из массива
-    // - планирует изменение цвета фона через 1000ms и записывает ID планировщика
-    // - делает кнопку СТАРТ не активной
-    // - делает кнопку СТОП активной
-    // - слушает кнопку СТОП и при клике выполняет
-        // - отменяет планировщик измеения цвета
+
+function getRandomColor() {
+    const min = 0;
+    const max = colors.length - 1;
+
+    const randomColor = colors[randomIntegerFromInterval(min, max)];
+
+    return randomColor;
+}
+
+function changeCurrentColor() { 
+    let color;
+
+    do {
+        color = getRandomColor();
+    } while (color === currentColor);
+    
+    currentColor = color;
+}
+ 
+function setBodyColor(color){ 
+    document.body.style.backgroundColor = color;
+}
+
+function switchBodyColor() { 
+
+    changeCurrentColor();
+
+    setBodyColor(currentColor);
+
+    console.log(currentColor);
+}
+
+function onClickButtonStart() {     
+
+    timerId = setInterval(switchBodyColor, COLOR_SWITCH_INTERVAL);
+    
+    refs.buttonStart.disabled = true;
+    refs.buttonStop.disabled = false;
+
+    refs.buttonStop.addEventListener('click', onClickButtonStop, { once: true });
+}
+
+function onClickButtonStop() { 
+
+    refs.buttonStop.disabled = true;
+    clearInterval(timerId);    
+    
+    refs.buttonStart.disabled = false;
+    refs.buttonStart.addEventListener('click', onClickButtonStart, {once: true});
+}
