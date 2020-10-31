@@ -8,6 +8,7 @@ const COLOR_SWITCH_INTERVAL = 1000;
 let timerId;
 
 const refs = {
+    controlPanel: document.querySelector(".color-switch-control-panel"), 
     buttonStart: document.querySelector('[data-action="start"]'),
     buttonStop: document.querySelector('[data-action="stop"]'),
 }
@@ -42,6 +43,7 @@ function changeCurrentColor() {
  
 function setBodyColor(color){ 
     document.body.style.backgroundColor = color;
+    refs.controlPanel.style.backgroundColor = color;
 }
 
 function switchBodyColor() { 
